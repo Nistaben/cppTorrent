@@ -98,7 +98,7 @@ void start_announcer(std::string username,std::string initial_file){
 
         std::string message = payload.dump();
             sendto(sock,message.c_str(),message.size(),0,(sockaddr*)&broadcastAddr,sizeof(broadcastAddr)); // (sockaddr*)&broadcastaddr olan kisim "bu belleği sockaddr gibi yorumla" demektir.
-            std::cout << "[*] Announced " << chunks.size() << " chunk(s): ";
+            std::cout << "[*] Announced " << chunks.size() << " chunk(s): "; // program buaya gelmeden hemen once duruyor !!
             for(int i =0;i<chunks.size();i++){
                 std::cout<<chunks[i]<<" ";
             }
