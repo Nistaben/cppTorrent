@@ -26,7 +26,7 @@ std::string split_file(const std::string& file_path) {
         return "";
     }
     int file_size = fs::file_size(file_path);        
-    int chunk_size = ceil(file_size / 3);
+    int chunk_size = file_size / 3;
     std::string base_name = fs::path(file_path).filename().string();
 
     std::cout<<"[*] Splitting "+base_name+" into 3 physical chunks..."<<std::endl;
@@ -73,9 +73,10 @@ std::vector<std::string> get_hosted_chunks(std::string base_name){
 
                 chunks.push_back(filename);
             } 
-            std::sort(chunks.begin(), chunks.end());   // alfabetik siraladik
-        return chunks;
+            
+        
     }//announce edilecek her seyin listesi alindi chunks olarka donduruldu
+        std::sort(chunks.begin(), chunks.end());   // alfabetik siraladik
         return chunks;
 }// start announcer yazilicak ama soyle bir problem var split file bool oldugu icin calismayabilir disariya bisi verdirmelyizo ndan
 void start_announcer(std::string username,std::string initial_file){
@@ -88,7 +89,7 @@ void start_announcer(std::string username,std::string initial_file){
     std::cout << "--- Chunk Announcer Started (username: " << username << ")" << std::endl;// konsola giden kisim
     
 
-    try{
+    //try{
         while(true){
             std::vector<std::string> chunks = get_hosted_chunks(base_name);
         json payload = {
@@ -102,11 +103,12 @@ void start_announcer(std::string username,std::string initial_file){
             for(int i =0;i<chunks.size();i++){
                 std::cout<<chunks[i]<<" ";
             }
+            std::cout << std::endl;
             sleep(10);
-        }
+        //}
 
     }
-    catch (std::runtime_error){}// keyboardinterrupti geciremedim SIGINT diye bir sey buldum ctrl c yakalayn o da bi exception degil yapamadim sonra bakilacak
+    //catch (std::runtime_error){}// keyboardinterrupti geciremedim SIGINT diye bir sey buldum ctrl c yakalayn o da bi exception degil yapamadim sonra bakilacak
     close(sock);//beejs 5.9
 }
 int main(){
