@@ -83,7 +83,7 @@ void start_announcer(std::string username,std::string initial_file){
 
     std::string base_name = split_file(initial_file);
     if(base_name.empty()){return;}
-    int sock = socket(AF_INET, SOCK_DGRAM, 0); // udp socketi olusturdum dgram
+    int sock = socket(AF_INET, SOCK_DGRAM, 0); // udp socketi olusturdum 
     int optval = 1;
     setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &optval, sizeof(optval));// broadcasti baslatir
     std::cout << "--- Chunk Announcer Started (username: " << username << ")" << std::endl;// konsola giden kisim
@@ -99,7 +99,7 @@ void start_announcer(std::string username,std::string initial_file){
 
         std::string message = payload.dump();
             sendto(sock,message.c_str(),message.size(),0,(sockaddr*)&broadcastAddr,sizeof(broadcastAddr)); // (sockaddr*)&broadcastaddr olan kisim "bu belleği sockaddr gibi yorumla" demektir.
-            std::cout << "[*] Announced " << chunks.size() << " chunk(s): "; // program buaya gelmeden hemen once duruyor !!
+            std::cout << "[*] Announced " << chunks.size() << " chunk(s): "; // program buaya gelmeden hemen once duruyor !!#cozuldu#
             for(int i =0;i<chunks.size();i++){
                 std::cout<<chunks[i]<<" ";
             }
