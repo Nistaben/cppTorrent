@@ -63,7 +63,7 @@ for (const auto& pair : content_dict) {
     }
 
     f2.close();
-    std::cout<<"save dictionaries calisti"<<std::endl;
+    
 }
 
 
@@ -82,11 +82,11 @@ void wipe_content_dict(){
     
     
 }
-std::cout<<"wipe content dict calisti"<<std::endl;
+
 }
 
 void handle_announcement(std::string data,std::string sender_ip){
-    std::cout<<"handleannouncement basi "<<std::endl;
+    
     
     json jdata; //json::parse_error
     try{jdata =json::parse(data);}   
@@ -104,7 +104,7 @@ void handle_announcement(std::string data,std::string sender_ip){
     for (std::string chunk :chunks){
         if(content_dict.find(chunk) != content_dict.end()){
             //burada kaldik 14 07 2026 content dicte ip addressi zate nvar mi falan filan kotnrol etcez sonra bitti bu fonk
-            std::cout<<"if buglatiyo olabilir oraya kadar calistigini anlamak icin"<<std::endl;
+           
             content_dict[chunk];
         }
         if (std::find(content_dict[chunk].begin(), content_dict[chunk].end(), sender_ip) == content_dict[chunk].end()) { //.find ile yapilmiyomus
@@ -118,7 +118,7 @@ void handle_announcement(std::string data,std::string sender_ip){
     }
     std::cout<<std::endl;
     save_dictionaries();
-    std::cout<<"handle announcement sonu"<<std::endl;
+   
     
 }
 // tamamen duzelt recvfromu  // duzeltildi recvfrom maine aktarilacak  handle annoucement sadece json parse kismi olarak kaldi 17/07/2026
