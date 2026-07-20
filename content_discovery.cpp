@@ -23,6 +23,7 @@ const std::string BROADCAST_IP = "192.168.1.255";  // LAN broadcast address; eve
 std::string SHARED_DIR ="shared_data";
 //fs::path file_path("example.txt");
 sockaddr_in my_addr{};
+sockaddr_in sender_addr{};
 timeval timeout{};
 /* struct timeval timeout;
 timeout.tv_sec = 5;      
@@ -48,27 +49,28 @@ for (const auto& pair : ip_to_username) {
     f.close();
 std::ofstream f1("shared_data/username_to_ip.txt");
 for (const auto& pair : username_to_ip) {
-        f<< pair.first << "#" << pair.second << "\n";
+        f1<< pair.first << "#" << pair.second << "\n";
     }
 
-    f.close();
+    f1.close();
     std::ofstream f2("shared_data/content_dict.txt");
 for (const auto& pair : content_dict) {
-        f<< pair.first << "#";
+        f2<< pair.first << "#";
         for(std::string i : pair.second){
             f<< i;
         }
         std::cout<<std::endl;
     }
 
-    f.close();
+    f2.close();
+    std::cout<<"save dictionaries calisti"<<std::endl;
 }
 
 
 void wipe_content_dict(){
 //  """Clears the content dictionary every 60 seconds so only recent content is shown."""
 
-while(true){
+
     time_t current_time = std::time(nullptr);
     if(current_time-last_wipe_time>=60){
         content_dict.clear();
@@ -76,21 +78,24 @@ while(true){
         save_dictionaries();
         std::cout<<"[*] Content dictionary wiped (60 seconds passed)"<<std::endl;
         
-   }
+   
     
     
 }
-
+std::cout<<"wipe content dict calisti"<<std::endl;
 }
 
 void handle_announcement(std::string data,std::string sender_ip){
+    std::cout<<"handleannouncement basi "<<std::endl;
+    
     json jdata; //json::parse_error
-    try{jdata ==json::parse(data);}   
+    try{jdata =json::parse(data);}   
     
 
     catch(json::parse_error){return;}
     std::string username = jdata.value("username",""); // .value kullanmadan jdata[] yaparsak username veya chunks yokas direkt type::error exception atipyo bozuyo boyle yoksa bile "" donuyor onu da kontrol etcez
-    std::vector<std::string> chunks = jdata.value("chunks", std::vector<std::string>{});    
+    std::vector<std::string> chunks = jdata.value("chunks", std::vector<std::string>{});
+    
     if(username ==""){
         return;
     }
@@ -113,6 +118,7 @@ void handle_announcement(std::string data,std::string sender_ip){
     }
     std::cout<<std::endl;
     save_dictionaries();
+    std::cout<<"handle announcement sonu"<<std::endl;
     
 }
 // tamamen duzelt recvfromu  // duzeltildi recvfrom maine aktarilacak  handle annoucement sadece json parse kismi olarak kaldi 17/07/2026
@@ -122,10 +128,11 @@ void handle_announcement(std::string data,std::string sender_ip){
 //void handle_announcement(?? buffer olarak alcaz herhalde data)
 void start_discovery(){
 //"""Listens for UDP broadcast announcements and processes them."""
-my_addr.sin_family =AF_INET6;
+my_addr.sin_family =AF_INET; /// 6 KALDIRILDIR
 my_addr.sin_port = htons(UDP_PORT);
-my_addr.sin_addr.s_addr = inet_addr(BROADCAST_IP.c_str()); 
-timeout.tv_sec =5;
+my_addr.sin_addr.s_addr = htonl(INADDR_ANY); // her ipyi dinle bu porta geldigi surece
+
+timeout.tv_sec =1;
 timeout.tv_usec =0; // buralar degisecek
  int sock = socket(AF_INET, SOCK_DGRAM, 0); // udp socketi olusturdum dgram
  int optval = 1;
@@ -134,7 +141,8 @@ bind(sock,(sockaddr*)&my_addr,sizeof(my_addr));
 setsockopt(sock,SOL_SOCKET,SO_RCVTIMEO,(timeval*)&timeout,sizeof(timeout));// 1 degerini daha atmadik ama 1 saniyede 1 timout aticak ki wipecontentdict i calisitircak miyiz calistirmayacak miyiz kontrol edicez
 
 std::cout<<"--- Chunk Discovery Started, listening on port "<<UDP_PORT<<" ---"<<std::endl;
-socklen_t myAdderLen = sizeof(my_addr);
+
+socklen_t sender_addrLen = sizeof(sender_addr);
 
 //try catchli kisim gelecek burada saliyorum
 char buffer[65535];
@@ -142,15 +150,15 @@ char csenderip[65535];
 while(true){
     wipe_content_dict();
      
-        size_t n = recvfrom(sock,
+        ssize_t n = recvfrom(sock,
             buffer,
             sizeof(buffer),
             0,
-            (struct sockaddr*)&my_addr,
-            &myAdderLen);
+            (struct sockaddr*)&sender_addr,
+            &sender_addrLen);
             if(n !=-1){
             std::string data(buffer,n);
-            getnameinfo((struct sockaddr*)&my_addr,myAdderLen,csenderip,sizeof(csenderip),nullptr,0,NI_NUMERICHOST);
+            getnameinfo((struct sockaddr*)&sender_addr,sender_addrLen,csenderip,sizeof(csenderip),nullptr,0,NI_NUMERICHOST);
             std::string sender_ip(csenderip);
             handle_announcement(data,sender_ip);};
             
