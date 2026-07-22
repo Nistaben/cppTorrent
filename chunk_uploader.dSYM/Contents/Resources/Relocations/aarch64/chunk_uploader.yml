@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/vici/Desktop/c++p2p/chunk_uploader'
+relocations:     []
+...

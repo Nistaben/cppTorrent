@@ -41,26 +41,19 @@ if (!fs::exists(SHARED_DIR)){
 fs::create_directory(SHARED_DIR); // folder olusturduk brahahaha
 } 
 std::ofstream f("shared_data/ip_user_map.txt");
-for (const auto& pair : ip_to_username) {
-        f<< pair.first << "#" << pair.second << "\n";
-    }
+json jsondata = ip_to_username;
+f<< jsondata;
 
     
     f.close();
 std::ofstream f1("shared_data/username_to_ip.txt");
-for (const auto& pair : username_to_ip) {
-        f1<< pair.first << "#" << pair.second << "\n";
-    }
+json jsondata1 = username_to_ip;
+f1<< jsondata1;
 
     f1.close();
     std::ofstream f2("shared_data/content_dict.txt");
-for (const auto& pair : content_dict) {
-        f2<< pair.first << "#";
-        for(std::string i : pair.second){
-            f<< i;
-        }
-        std::cout<<std::endl;
-    }
+json jsondata2 = content_dict;
+f2<< jsondata2;
 
     f2.close();
     
@@ -137,7 +130,7 @@ timeout.tv_usec =0; // buralar degisecek
  int sock = socket(AF_INET, SOCK_DGRAM, 0); // udp socketi olusturdum dgram
  int optval = 1;
  setsockopt(sock,SOL_SOCKET,SO_REUSEADDR,&optval,sizeof(optval));//reuseaddr ile tekarra buraya broadcast gelirse seyiengelliyor Address already in use” error messages when you try to restart your server after a crash. beejs
-bind(sock,(sockaddr*)&my_addr,sizeof(my_addr));
+bind(sock,(sockaddr*)&my_addr,sizeof(my_addr)); // porta bindladik ip kismi bos //htonl(INADDR_ANY);
 setsockopt(sock,SOL_SOCKET,SO_RCVTIMEO,(timeval*)&timeout,sizeof(timeout));// 1 degerini daha atmadik ama 1 saniyede 1 timout aticak ki wipecontentdict i calisitircak miyiz calistirmayacak miyiz kontrol edicez
 
 std::cout<<"--- Chunk Discovery Started, listening on port "<<UDP_PORT<<" ---"<<std::endl;
