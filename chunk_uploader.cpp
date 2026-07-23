@@ -25,29 +25,40 @@ std::string UPLOAD_LOG ="upload_log.txt";
 std::string IP_USER_FILE = SHARED_DIR + "ip_user_map.txt";
 
 
-std::map<std::string, std::string> load_ip_user_map(){
-    ///"""Reads the IP→username map from disk and returns it as a dict."""
-    if(!fs::exists(IP_USER_FILE)){
-        fs::create_directory(IP_USER_FILE);
-        
-    }
+json load_ip_user_map(){
+///"""Reads the IP→username map from disk and returns it as a dict."""
     if(!fs::exists(IP_USER_FILE)){
         return{};
     }
-    std::ifstream f("IP_USER_FILE");
+    std::ifstream f(IP_USER_FILE);
     if(!f.is_open()){
         return {};
     }
     json data = json::parse(f);
-    std::cout<<data;
-    return data; /// bu boyle calisiyormus cok ilginc
+    
+    return data; /// bu boyle calisiyormus cok ilginc json olarak return edebiliyoz hashmapi
 
     
 }
 std::string resolve_username(std::string ip){
     //  """Returns the username for a given IP, falling back to the raw IP if not found."""
-    std::string username = load_ip_user_map().second()
+    std::string username = load_ip_user_map().value(ip,ip); //This is equivalent to Python's dict.get(key, default). "" https://json.nlohmann.me/api/basic_json/value/
+    return load_ip_user_map();// buarada kalindi yapilacak belki hashmap degil direkt  json olarak dondurur .value() ile hallederiz
 }
+// std::string get_des_key(int shared_secret_int){} buna gerek yok cpp stringi zaten byte direkt
+void log_upload(std::string chunk_name,std::string recipient_ip){
+    // """Appends a SENT entry to the upload log file for the given chunk."""
+
+    std::time_t now = std::time(nullptr);
+    std::string timeanddate = std::asctime(std::localtime(&now));
+    std::cout<<timeanddate;
+    return;
+}
+
+
+
+
 int main(){
-    load_ip_user_map();
+    log_upload("asda","12312");
+    
 }
